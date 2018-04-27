@@ -1,15 +1,104 @@
+html {
+    font-size: 14px;
+    box-sizing: border-box;
+}
 body {
-  font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
-  margin: 0;
-  text-align: center;
-  color: #293c4b;
+    font-family: 'Helvetica', sans-serif;
+    font-weight: lighter;
+    margin: 0;
+    color: #46289A;
 }
 
-h1 {
-  font-size: 30px;
+.jolts-counts {
+    display: flex;
+    justify-content: space-between;
 }
 
-img {
-  margin: 20px 0;
-  max-width: 200px;
+.jolts-count {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: .5rem 1vw;
+    padding: 2vw;
+    width: 30vw;
+    width: 30vw;
+}
+
+.jolts-count__hero-number {
+    text-align: center;
+    font-size: 10rem;
+}
+
+.jolts-count__hero-text {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.jolts-count__history:first-of-type {
+    margin-top: 1.5rem;
+}
+.jolts-count__history {
+    font-size: 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.munich-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 1rem 2vw;
+}
+
+.munich-logo__image {
+    width: 16vw;
+}
+
+.jolts-header {
+    font-weight: lighter;
+    font-size: 1.3rem;
+    margin-top: 3rem;
+    margin-left: 3vw;
+}
+
+.jolt-messages {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    align-content: space-between;
+    width: 100vw;
+}
+
+.jolt-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: .5rem 1vw;
+    padding: 2vw;
+    width: 19vw;
+}
+
+.jolt-content {
+    margin-bottom: .5rem;
+}
+
+.jolt-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.jolt-user {
+    font-size: .7rem;
+}
+
+.jolt-sent {
+    font-size: .7rem;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.no-jolts {
+    width: 100vw;
+    text-align: center;
+    font-size: 4rem;
 }
