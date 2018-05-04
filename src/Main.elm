@@ -13,7 +13,14 @@ import Task
 import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
 import Components.JoltMessage exposing (joltMessage)
-import Helpers.Constants exposing (userToken, apiRoot, flowUrl)
+-- import Helpers.Constants exposing (userToken, apiRoot, flowUrl)
+
+type alias Config =
+    { 
+      userToken: String,
+      apiRoot: String,
+      flowUrl: String
+    }
 
 
 ---- COMMANDS ----
@@ -25,8 +32,8 @@ getTime =
         |> Task.perform Tick
 
 
-requestFlow : String -> Decoder a -> (Result Http.Error a -> Msg) -> Cmd Msg
-requestFlow url decodeBody messageAfterResponse =
+requestFlow : String -> String -> Decoder a -> (Result Http.Error a -> Msg) -> Cmd Msg
+requestFlow url userToken decodeBody messageAfterResponse =
     let
         authorization =
             "Basic " ++ userToken
@@ -48,18 +55,20 @@ requestFlow url decodeBody messageAfterResponse =
         Http.send messageAfterResponse request
 
 
-requestFlowUsers : Cmd Msg
-requestFlowUsers =
+requestFlowUsers : Config -> Cmd Msg
+requestFlowUsers config =
     requestFlow
-        (apiRoot ++ flowUrl ++ "/users")
+        (config.apiRoot ++ config.flowUrl ++ "/users")
+        config.userToken
         decodeUsers
         GetFlowUserResponse
 
 
-requestFlowMessages : Cmd Msg
-requestFlowMessages =
-    requestFlow
-        (apiRoot ++ flowUrl ++ "/messages?search=jolt&limit=100")
+requestFlowMessages : Config -> Cmd Msg
+requestFlowMessages config = 
+    requestFlow 
+        (config.apiRoot ++ config.flowUrl ++ "/messages?search=jolt&limit=100")
+        config.userToken
         decodeMessages
         GetFlowMessagesResponse
 
@@ -75,21 +84,23 @@ type alias Model =
     , flowMessages : List Message
     , flowUsers : List User
     , flowUsersError : Maybe String
+    , config: Config
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Config -> ( Model, Cmd Msg )
+init config =
     ( { currentTime = 0
       , flowMessagesLoading = True
       , flowMessagesLoadingError = Nothing
       , flowMessages = []
       , flowUsers = []
       , flowUsersError = Nothing
+      , config = config
       }
     , Cmd.batch
         [ getTime
-        , requestFlowUsers
+        , requestFlowUsers config
         ]
     )
 
@@ -111,7 +122,7 @@ update msg model =
     case msg of
         GetFlowJolts ->
             ( { model | flowMessagesLoading = True, flowMessagesLoadingError = Nothing }
-            , requestFlowMessages
+            , requestFlowMessages model.config
             )
 
         GetFlowMessagesResponse (Ok joltMessages) ->
@@ -132,7 +143,7 @@ update msg model =
                 , flowMessagesLoading = True
                 , flowMessagesLoadingError = Nothing
               }
-            , requestFlowMessages
+            , requestFlowMessages model.config
             )
 
         NoOp ->
@@ -312,10 +323,9 @@ view model =
 
 ---- PROGRAM ----
 
-
-main : Program Never Model Msg
+main : Program Config Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { view = view
         , init = init
         , update = update
