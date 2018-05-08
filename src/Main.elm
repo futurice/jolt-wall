@@ -13,7 +13,6 @@ import Task
 import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
 import Components.JoltMessage exposing (joltMessage)
--- import Helpers.Constants exposing (userToken, apiRoot, flowUrl)
 
 type alias Config =
     { 
