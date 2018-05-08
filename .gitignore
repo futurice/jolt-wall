@@ -10,5 +10,8 @@ repl-temp-*
 # Dependency directories
 node_modules
 
+# ENV file
+.env
+
 # Desktop Services Store on macOS
 .DS_Store
