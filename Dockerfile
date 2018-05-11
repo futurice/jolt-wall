@@ -1,8 +1,6 @@
-FROM ubuntu:16.04
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y \
-    python
+FROM node:8.11.1
+RUN npm install http-server -g
 
 COPY ./build /
 EXPOSE 8000
-CMD ["python", "-m", "SimpleHTTPServer", "8000"]
+CMD ["http-server", "-p", "8000"]
