@@ -86,16 +86,24 @@ body {
 .jolt-details {
     display: flex;
     justify-content: space-between;
+    margin-top: .5rem;
 }
 
 .jolt-user {
     font-size: .7rem;
 }
 
+.jolt-user__img {
+    border-radius: 50%;
+    margin-right: .5rem;
+    vertical-align: middle;
+}
+
 .jolt-sent {
     font-size: .7rem;
     display: flex;
     flex-direction: column-reverse;
+    justify-content: center;
 }
 
 .no-jolts {

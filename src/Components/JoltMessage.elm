@@ -42,7 +42,7 @@ joltMessage jolt users =
             ]
         , div [ class "jolt-details" ]
             [ div [ class "jolt-user" ]
-                [ img [ src joltUser.avatar ] []
+                [ img [ class "jolt-user__img", src joltUser.avatar ] []
                 , text <| " " ++ joltUser.nick
                 ]
             , div [ class "jolt-sent" ] [ text joltSent ]
