@@ -14,12 +14,13 @@ import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
 import Components.JoltMessage exposing (joltMessage)
 
+
 type alias Config =
-    { 
-      userToken: String,
-      apiRoot: String,
-      flowUrl: String
+    { userToken : String
+    , apiRoot : String
+    , flowUrl : String
     }
+
 
 
 ---- COMMANDS ----
@@ -64,8 +65,8 @@ requestFlowUsers config =
 
 
 requestFlowMessages : Config -> Cmd Msg
-requestFlowMessages config = 
-    requestFlow 
+requestFlowMessages config =
+    requestFlow
         (config.apiRoot ++ config.flowUrl ++ "/messages?search=jolt&limit=100")
         config.userToken
         decodeMessages
@@ -83,7 +84,7 @@ type alias Model =
     , flowMessages : List Message
     , flowUsers : List User
     , flowUsersError : Maybe String
-    , config: Config
+    , config : Config
     }
 
 
@@ -321,6 +322,7 @@ view model =
 
 
 ---- PROGRAM ----
+
 
 main : Program Config Model Msg
 main =
