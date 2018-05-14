@@ -79,6 +79,24 @@ body {
     width: 19vw;
 }
 
+.jolt-in-message {
+    text-transform: uppercase;
+    animation: pulse 4s infinite;
+    padding-left: .2rem;
+    padding-right: .2rem;
+}
+
+@keyframes pulse {
+    0%, 50%, 100% {
+        background-color: #FFF;
+        color: #46289A;
+    }
+    25% {
+        background-color: #46289A;
+        color: #FFF;
+    }
+}
+
 .jolt-content {
     margin-bottom: .5rem;
 }
