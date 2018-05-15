@@ -46,22 +46,21 @@ body {
     font-size: 3rem;
     display: flex;
     justify-content: space-between;
-    margin-right: 5rem;
+    margin-right: 12rem;
 }
 
 .munich-logo {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    margin: 1rem 2vw;
+    margin: 4vh 2vw;
 }
 
 .munich-logo__image {
-    width: 12vw;
+    width: 8vw;
 }
 
 .jolts-header {
-    font-weight: lighter;
     font-size: 1.3rem;
     margin-top: 3rem;
     margin-left: 3vw;
@@ -87,8 +86,7 @@ body {
 .jolt-in-message {
     text-transform: uppercase;
     animation: pulse 4s infinite;
-    padding-left: .2rem;
-    padding-right: .2rem;
+    padding: .2rem .2rem .1rem;
 }
 
 @keyframes pulse {
