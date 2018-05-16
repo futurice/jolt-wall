@@ -3,7 +3,7 @@ module Components.JoltMessage exposing (..)
 import Html exposing (Html, text, div, img, span)
 import Html.Attributes exposing (src, class)
 import Maybe exposing (withDefault)
-import String exposing (padLeft, left, split)
+import String exposing (padLeft, left, dropLeft, split)
 import Date exposing (minute, hour, day, month)
 import Types.Message exposing (Message)
 import Types.User exposing (User)
@@ -19,12 +19,25 @@ joltMessage jolt users =
                 |> List.head
                 |> withDefault (User "" "unknown" "")
 
+        joltedUsers =
+            withDefault "" jolt.content
+                |> String.words
+                |> List.filter (\word -> left 1 word == "@")
+                |> List.map (dropLeft 1)
+                |> List.filterMap
+                    (\nickString ->
+                        users
+                            |> List.filter (\user -> user.nick == nickString)
+                            |> List.head
+                    )
+                |> Debug.log "jolted users"
+
         joltSent : String
         joltSent =
             (toString <| day jolt.sent)
                 ++ " "
                 ++ (toString <| month jolt.sent)
-                ++ " @ "
+                ++ " at "
                 ++ (toString <| hour jolt.sent)
                 ++ ":"
                 ++ (padLeft 2 '0' <| toString <| minute jolt.sent)
@@ -74,13 +87,18 @@ joltMessage jolt users =
                 |> List.map stringToSpan
                 |> extractHeadTailAsEmptyArrays
                 |> addJoltsBetweenItems
+
+        renderJoltedUsers =
+            joltedUsers
+                |> List.map (\user -> (img [ class "jolt-participants__user-img--right", src user.avatar ] []))
     in
-        [ div [ class "jolt-content" ] joltMessage
+        [ div [ class "jolt-participants" ]
+            [ div [] [ img [ class "jolt-participants__user-img", src joltUser.avatar ] [] ]
+            , div [ class "jolt-participants__arrow" ] [ text ">" ]
+            , div [] renderJoltedUsers
+            ]
+        , div [ class "jolt-content" ] joltMessage
         , div [ class "jolt-details" ]
-            [ div [ class "jolt-user" ]
-                [ img [ class "jolt-user__img", src joltUser.avatar ] []
-                , text <| " " ++ joltUser.nick
-                ]
-            , div [ class "jolt-sent" ] [ text joltSent ]
+            [ text <| joltSent ++ " by " ++ joltUser.nick
             ]
         ]
