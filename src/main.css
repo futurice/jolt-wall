@@ -102,8 +102,7 @@ body {
 
 .jolt-content {
     margin-bottom: .5rem;
-    overflow: hidden;
-    word-break: break-all;
+    word-wrap: break-word;
 }
 
 .jolt-details {
