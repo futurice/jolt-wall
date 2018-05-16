@@ -10,7 +10,7 @@ import Time.DateTime as DateTime exposing (DateTime, fromTimestamp, toTimestamp,
 import Maybe exposing (withDefault)
 import List exposing (take)
 import Task
-import Helpers.Jolts exposing (validJolts, joltsCountThisMonth)
+import Helpers.Jolts exposing (validJolts, joltsCountInMonth)
 import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
@@ -182,7 +182,7 @@ view model =
             validJolts model.flowMessages
 
         joltsThisMonth =
-            joltsCountThisMonth model.flowMessages model.currentTime
+            joltsCountInMonth model.flowMessages model.currentTime
 
         joltsInPreviousMonths : List ( Month, Int )
         joltsInPreviousMonths =

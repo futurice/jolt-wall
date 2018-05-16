@@ -15,15 +15,15 @@ validJolts flowMessages =
         |> filter (\item -> item.content /= Nothing)
 
 
-joltsCountThisMonth : List Message -> Time -> Int
-joltsCountThisMonth flowMessages currentTime =
+joltsCountInMonth : List Message -> Time -> Int
+joltsCountInMonth flowMessages time =
     flowMessages
         |> validJolts
         |> filter
             (\jolt ->
                 (month jolt.sent)
-                    == (getMonthFromTime currentTime)
+                    == (getMonthFromTime time)
                     && (year jolt.sent)
-                    == (getYearFromTime currentTime)
+                    == (getYearFromTime time)
             )
         |> length
