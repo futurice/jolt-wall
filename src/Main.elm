@@ -1,20 +1,17 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img, p, button)
-import Html.Attributes exposing (src, disabled, id, class)
+import Html exposing (Html, text, div, h1)
+import Html.Attributes exposing (class)
 import Http
 import Json.Decode exposing (Decoder)
 import Time exposing (Time, second, millisecond)
-import Date exposing (Date, Month, toTime, fromTime)
-import Maybe exposing (withDefault)
-import List exposing (take)
 import Task
-import Helpers.Jolts exposing (validJolts, joltsCountInMonth, joltsInPreviousMonths)
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
 import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
 import Components.JoltMessages exposing (joltMessages)
+import Components.JoltCounts exposing (joltCounts)
 
 
 ---- COMMANDS ----
@@ -166,44 +163,9 @@ view model =
                 "   Loading..."
             else
                 ""
-
-        joltsThisMonth =
-            joltsCountInMonth model.flowMessages model.currentTime
-
-        joltsCountInPreviousMonths =
-            joltsInPreviousMonths model.flowMessages model.currentTime 3
-
-        renderJoltHistory : List ( Month, Int ) -> List (Html Msg)
-        renderJoltHistory monthJoltsList =
-            monthJoltsList
-                |> List.map
-                    (\monthJolts ->
-                        let
-                            monthString =
-                                monthJolts
-                                    |> Tuple.first
-                                    |> toString
-
-                            joltsString =
-                                monthJolts
-                                    |> Tuple.second
-                                    |> toString
-                        in
-                            div [ class "jolts-count__history" ]
-                                [ div [] [ text monthString ]
-                                , div [] [ text joltsString ]
-                                ]
-                    )
     in
         div []
-            ([ div [ class "jolts-counts" ]
-                [ div [ class "jolts-count" ]
-                    [ div [ class "jolts-count__hero-number" ] [ text <| toString joltsThisMonth ]
-                    , div [ class "jolts-count__hero-text" ] [ text "Jolts this month" ]
-                    ]
-                , div [ class "jolts-count" ] (renderJoltHistory joltsCountInPreviousMonths)
-                , div [ class "munich-logo" ] [ img [ src "/logo.svg", class "munich-logo__image" ] [] ]
-                ]
+            ([ joltCounts model
              , messagesError
              , usersError
              , h1 [ class "jolts-header" ]
