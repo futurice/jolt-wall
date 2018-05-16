@@ -10,17 +10,13 @@ import Time.DateTime as DateTime exposing (DateTime, fromTimestamp, toTimestamp,
 import Maybe exposing (withDefault)
 import List exposing (take)
 import Task
+import Helpers.Jolts exposing (validJolts, joltsCountThisMonth)
+import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
+import Types.Config exposing (Config)
+import Types.Model exposing (Model)
 import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
-import Components.JoltMessage exposing (joltMessage)
-
-
-type alias Config =
-    { userToken : String
-    , apiRoot : String
-    , flowUrl : String
-    }
-
+import Components.JoltMessages exposing (joltMessages)
 
 
 ---- COMMANDS ----
@@ -71,21 +67,6 @@ requestFlowMessages config =
         config.userToken
         decodeMessages
         GetFlowMessagesResponse
-
-
-
----- MODEL ----
-
-
-type alias Model =
-    { currentTime : Time
-    , flowMessagesLoading : Bool
-    , flowMessagesLoadingError : Maybe String
-    , flowMessages : List Message
-    , flowUsers : List User
-    , flowUsersError : Maybe String
-    , config : Config
-    }
 
 
 init : Config -> ( Model, Cmd Msg )
@@ -188,53 +169,24 @@ view model =
             else
                 ""
 
-        currentDate =
-            model.currentTime
-                |> Date.fromTime
-
-        currentDateTime =
-            model.currentTime
-                |> fromTimestamp
-
         thisYear =
-            Date.year currentDate
+            getYearFromTime model.currentTime
 
         thisMonth =
-            Date.month currentDate
+            getMonthFromTime model.currentTime
 
-        previousMonth : Int -> Time
-        previousMonth months =
-            currentDateTime
-                |> addMonths months
-                |> toTimestamp
+        previousMonths =
+            getPreviousMonths model.currentTime 3
 
-        allMonths : List Time
-        allMonths =
-            [ previousMonth -1
-            , previousMonth -2
-            , previousMonth -3
-            ]
-
-        validJolts =
-            model.flowMessages
-                |> List.reverse
-                |> List.filter (\item -> item.event == "message")
-                |> List.filter (\item -> item.content /= Nothing)
+        jolts =
+            validJolts model.flowMessages
 
         joltsThisMonth =
-            validJolts
-                |> List.filter
-                    (\jolt ->
-                        (Date.month jolt.sent)
-                            == thisMonth
-                            && (Date.year jolt.sent)
-                            == thisYear
-                    )
-                |> List.length
+            joltsCountThisMonth model.flowMessages model.currentTime
 
         joltsInPreviousMonths : List ( Month, Int )
         joltsInPreviousMonths =
-            allMonths
+            previousMonths
                 |> List.map
                     (\time ->
                         let
@@ -249,7 +201,7 @@ view model =
                                     |> Date.month
 
                             joltAmount =
-                                validJolts
+                                jolts
                                     |> List.filter
                                         (\jolt ->
                                             (Date.month jolt.sent)
@@ -283,22 +235,6 @@ view model =
                                 , div [] [ text joltsString ]
                                 ]
                     )
-
-        joltMessages : List (Html Msg)
-        joltMessages =
-            if List.length model.flowMessages == 0 then
-                [ div [ class "no-jolts" ] [ text "KEINE JOLTS!!! Was ist los!" ] ]
-            else
-                validJolts
-                    |> take 12
-                    |> List.indexedMap
-                        (\index item ->
-                            let
-                                htmlId =
-                                    ("jolt-message-" ++ toString index)
-                            in
-                                div [ id htmlId, class "jolt-message" ] (joltMessage item model.flowUsers)
-                        )
     in
         div []
             ([ div [ class "jolts-counts" ]
@@ -315,7 +251,7 @@ view model =
                 [ text <| "Jolt feed" ++ loadingText
                   --, button [ onClick GetFlowJolts ] [ text "Get jolts" ]
                 ]
-             , div [ class "jolt-messages" ] joltMessages
+             , joltMessages model jolts
              ]
             )
 
