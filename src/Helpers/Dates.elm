@@ -23,13 +23,15 @@ getMonthFromTime time =
 getPreviousMonths : Time -> Int -> List Time
 getPreviousMonths time monthsToGet =
     let
-        dateTime =
-            fromTimestamp time
+        addMonthsWithDate =
+            time
+                |> fromTimestamp
+                |> flip addMonths
     in
         monthsToGet
             |> range 1
             |> map
                 (negate
-                    >> (flip addMonths) dateTime
+                    >> addMonthsWithDate
                     >> toTimestamp
                 )
