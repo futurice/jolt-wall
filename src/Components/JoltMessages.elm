@@ -15,7 +15,7 @@ joltMessages model =
         messages =
             model.flowMessages
 
-        jolts =
+        renderJolts =
             if length messages == 0 then
                 [ div [ class "no-jolts" ] [ text "KEINE JOLTS!!! Was ist los!" ] ]
             else
@@ -30,4 +30,4 @@ joltMessages model =
                                 div [ id htmlId, class "jolt-message" ] (joltMessage item model.flowUsers)
                         )
     in
-        div [ class "jolt-messages" ] jolts
+        div [ class "jolt-messages" ] renderJolts
