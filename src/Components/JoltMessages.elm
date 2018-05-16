@@ -6,16 +6,20 @@ import List exposing (indexedMap, length, take)
 import Components.JoltMessage exposing (joltMessage)
 import Types.Model exposing (Model)
 import Types.Message exposing (Message)
+import Helpers.Jolts exposing (validJolts)
 
 
-joltMessages : Model -> List Message -> Html msg
-joltMessages model validJolts =
+joltMessages : Model -> Html msg
+joltMessages model =
     let
         messages =
-            if length model.flowMessages == 0 then
+            model.flowMessages
+
+        jolts =
+            if length messages == 0 then
                 [ div [ class "no-jolts" ] [ text "KEINE JOLTS!!! Was ist los!" ] ]
             else
-                validJolts
+                validJolts messages
                     |> take 12
                     |> indexedMap
                         (\index item ->
@@ -26,4 +30,4 @@ joltMessages model validJolts =
                                 div [ id htmlId, class "jolt-message" ] (joltMessage item model.flowUsers)
                         )
     in
-        div [ class "jolt-messages" ] messages
+        div [ class "jolt-messages" ] jolts

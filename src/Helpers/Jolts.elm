@@ -1,9 +1,9 @@
 module Helpers.Jolts exposing (..)
 
-import List exposing (reverse, filter, length)
-import Date exposing (year, month)
+import List exposing (reverse, filter, length, map)
+import Date exposing (Month, year, month)
 import Time exposing (Time)
-import Helpers.Dates exposing (getMonthFromTime, getYearFromTime)
+import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
 import Types.Message exposing (Message)
 
 
@@ -27,3 +27,19 @@ joltsCountInMonth flowMessages time =
                     == (getYearFromTime time)
             )
         |> length
+
+
+joltsInPreviousMonths : List Message -> Time -> Int -> List ( Month, Int )
+joltsInPreviousMonths flowMessages comparedTime monthsToGet =
+    getPreviousMonths comparedTime monthsToGet
+        |> map
+            (\time ->
+                let
+                    month =
+                        getMonthFromTime time
+
+                    joltAmount =
+                        joltsCountInMonth flowMessages time
+                in
+                    ( month, joltAmount )
+            )

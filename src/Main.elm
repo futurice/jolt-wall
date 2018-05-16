@@ -6,11 +6,10 @@ import Http
 import Json.Decode exposing (Decoder)
 import Time exposing (Time, second, millisecond)
 import Date exposing (Date, Month, toTime, fromTime)
-import Time.DateTime as DateTime exposing (DateTime, fromTimestamp, toTimestamp, toISO8601, addMonths)
 import Maybe exposing (withDefault)
 import List exposing (take)
 import Task
-import Helpers.Jolts exposing (validJolts, joltsCountInMonth)
+import Helpers.Jolts exposing (validJolts, joltsCountInMonth, joltsInPreviousMonths)
 import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
@@ -175,44 +174,11 @@ view model =
         thisMonth =
             getMonthFromTime model.currentTime
 
-        previousMonths =
-            getPreviousMonths model.currentTime 3
-
-        jolts =
-            validJolts model.flowMessages
-
         joltsThisMonth =
             joltsCountInMonth model.flowMessages model.currentTime
 
-        joltsInPreviousMonths : List ( Month, Int )
-        joltsInPreviousMonths =
-            previousMonths
-                |> List.map
-                    (\time ->
-                        let
-                            year =
-                                time
-                                    |> fromTime
-                                    |> Date.year
-
-                            month =
-                                time
-                                    |> fromTime
-                                    |> Date.month
-
-                            joltAmount =
-                                jolts
-                                    |> List.filter
-                                        (\jolt ->
-                                            (Date.month jolt.sent)
-                                                == month
-                                                && (Date.year jolt.sent)
-                                                == year
-                                        )
-                                    |> List.length
-                        in
-                            ( month, joltAmount )
-                    )
+        joltsCountInPreviousMonths =
+            joltsInPreviousMonths model.flowMessages model.currentTime 3
 
         renderJoltHistory : List ( Month, Int ) -> List (Html Msg)
         renderJoltHistory monthJoltsList =
@@ -242,7 +208,7 @@ view model =
                     [ div [ class "jolts-count__hero-number" ] [ text <| toString joltsThisMonth ]
                     , div [ class "jolts-count__hero-text" ] [ text "Jolts this month" ]
                     ]
-                , div [ class "jolts-count" ] (renderJoltHistory joltsInPreviousMonths)
+                , div [ class "jolts-count" ] (renderJoltHistory joltsCountInPreviousMonths)
                 , div [ class "munich-logo" ] [ img [ src "/logo.svg", class "munich-logo__image" ] [] ]
                 ]
              , messagesError
@@ -251,7 +217,7 @@ view model =
                 [ text <| "Jolt feed" ++ loadingText
                   --, button [ onClick GetFlowJolts ] [ text "Get jolts" ]
                 ]
-             , joltMessages model jolts
+             , joltMessages model
              ]
             )
 
