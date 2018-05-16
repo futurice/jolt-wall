@@ -3,7 +3,7 @@ module Components.JoltMessage exposing (..)
 import Html exposing (Html, text, div, img, span)
 import Html.Attributes exposing (src, class)
 import Maybe exposing (withDefault)
-import String exposing (padLeft, left, dropLeft, split)
+import String exposing (padLeft, left, dropLeft, split, startsWith)
 import Date exposing (minute, hour, day, month)
 import Types.Message exposing (Message)
 import Types.User exposing (User)
@@ -19,18 +19,22 @@ joltMessage jolt users =
                 |> List.head
                 |> withDefault (User "" "unknown" "")
 
+        joltedUsers : List User
         joltedUsers =
-            withDefault "" jolt.content
-                |> String.words
-                |> List.filter (\word -> left 1 word == "@")
-                |> List.map (dropLeft 1)
-                |> List.filterMap
-                    (\nickString ->
-                        users
-                            |> List.filter (\user -> user.nick == nickString)
-                            |> List.head
-                    )
-                |> Debug.log "jolted users"
+            let
+                userTag =
+                    ":user:"
+            in
+                jolt.tags
+                    |> List.filter (\tag -> startsWith userTag tag)
+                    |> List.map (dropLeft <| String.length userTag)
+                    |> List.filterMap
+                        (\userIdString ->
+                            users
+                                |> List.filter (\user -> user.id == userIdString)
+                                |> List.head
+                        )
+                    |> Debug.log "jolted users"
 
         joltSent : String
         joltSent =
@@ -51,7 +55,11 @@ joltMessage jolt users =
 
         splitWithJolt : String -> List String
         splitWithJolt string =
-            split ":jolt:" string
+            let
+                joltTag =
+                    ":jolt:"
+            in
+                split joltTag string
 
         joltSpan : Html msg
         joltSpan =

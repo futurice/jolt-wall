@@ -15,6 +15,7 @@ type alias Message =
     , uuid : String
     , sent : Date
     , createdAt : String
+    , tags : List String
     }
 
 
@@ -26,6 +27,11 @@ decodeDate : Decoder Date
 decodeDate =
     float
         |> andThen (succeed << Date.fromTime)
+
+
+decodeTags : Decoder (List String)
+decodeTags =
+    Json.Decode.list string
 
 
 decodeMessages : Decoder (List Message)
@@ -42,3 +48,4 @@ decodeMessage =
         |> required "uuid" string
         |> required "sent" decodeDate
         |> required "created_at" string
+        |> required "tags" decodeTags
