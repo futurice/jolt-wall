@@ -10,7 +10,6 @@ import Maybe exposing (withDefault)
 import List exposing (take)
 import Task
 import Helpers.Jolts exposing (validJolts, joltsCountInMonth, joltsInPreviousMonths)
-import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
 import Types.Message exposing (Message, decodeMessages)
@@ -167,12 +166,6 @@ view model =
                 "   Loading..."
             else
                 ""
-
-        thisYear =
-            getYearFromTime model.currentTime
-
-        thisMonth =
-            getMonthFromTime model.currentTime
 
         joltsThisMonth =
             joltsCountInMonth model.flowMessages model.currentTime
