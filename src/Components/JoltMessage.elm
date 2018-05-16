@@ -34,7 +34,6 @@ joltMessage jolt users =
                                 |> List.filter (\user -> user.id == userIdString)
                                 |> List.head
                         )
-                    |> Debug.log "jolted users"
 
         joltSent : String
         joltSent =
