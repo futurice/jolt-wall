@@ -50,18 +50,11 @@ joltMessage jolt users =
 
         extractHeadTailAsEmptyArrays : List (Html msg) -> ( List (Html msg), List (Html msg) )
         extractHeadTailAsEmptyArrays spans =
-            ( case (List.head spans) of
-                Just span ->
-                    [ span ]
-
-                Nothing ->
-                    []
-            , case (List.tail spans) of
-                Just spans ->
-                    spans
-
-                Nothing ->
-                    []
+            ( withDefault []
+                (List.head spans
+                    |> Maybe.map List.singleton
+                )
+            , withDefault [] (List.tail spans)
             )
 
         foldJolts : Html msg -> List (Html msg) -> List (Html msg)
