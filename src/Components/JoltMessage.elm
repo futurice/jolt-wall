@@ -95,13 +95,19 @@ joltMessage jolt users =
                 |> extractHeadTailAsEmptyArrays
                 |> addJoltsBetweenItems
 
+        joltArrow =
+            if List.isEmpty joltedUsers then
+                ""
+            else
+                ">"
+
         renderJoltedUsers =
             joltedUsers
                 |> List.map (\user -> (img [ class "jolt-participants__user-img--right", src user.avatar ] []))
     in
         [ div [ class "jolt-participants" ]
             [ div [] [ img [ class "jolt-participants__user-img", src joltUser.avatar ] [] ]
-            , div [ class "jolt-participants__arrow" ] [ text ">" ]
+            , div [ class "jolt-participants__arrow" ] [ text joltArrow ]
             , div [] renderJoltedUsers
             ]
         , div [ class "jolt-content" ] joltMessage
