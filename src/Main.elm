@@ -136,21 +136,19 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        messagesError =
-            case model.flowMessagesLoadingError of
-                Just error ->
-                    div [] [ text error ]
+        renderError error =
+            case error of
+                Just err ->
+                    div [] [ text err ]
 
                 Nothing ->
                     text ""
+
+        messagesError =
+            renderError model.flowMessagesLoadingError
 
         usersError =
-            case model.flowUsersError of
-                Just error ->
-                    div [] [ text error ]
-
-                Nothing ->
-                    text ""
+            renderError model.flowUsersError
 
         loadingText =
             if model.flowMessagesLoading then
