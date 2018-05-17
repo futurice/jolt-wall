@@ -86,8 +86,7 @@ init config =
 
 
 type Msg
-    = GetFlowJolts
-    | GetFlowMessagesResponse (Result Http.Error (List Message))
+    = GetFlowMessagesResponse (Result Http.Error (List Message))
     | GetFlowUserResponse (Result Http.Error (List User))
     | Tick Time
     | NoOp
@@ -96,11 +95,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GetFlowJolts ->
-            ( { model | flowMessagesLoading = True, flowMessagesLoadingError = Nothing }
-            , requestFlowMessages model.config
-            )
-
         GetFlowMessagesResponse (Ok joltMessages) ->
             ( { model | flowMessages = joltMessages, flowMessagesLoading = False }, Cmd.none )
 
@@ -160,18 +154,15 @@ view model =
 
         loadingText =
             if model.flowMessagesLoading then
-                "   Loading..."
+                div [] [ text "Loading..." ]
             else
-                ""
+                text ""
     in
         div []
             ([ joltCounts model
              , messagesError
              , usersError
-             , h1 [ class "jolts-header" ]
-                [ text <| "Jolt feed" ++ loadingText
-                  --, button [ onClick GetFlowJolts ] [ text "Get jolts" ]
-                ]
+             , loadingText
              , joltMessages model
              ]
             )
