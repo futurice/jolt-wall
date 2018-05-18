@@ -1,10 +1,15 @@
+@font-face {
+    font-family: 'FutuRegu';
+    src: url('../public/futurice-font/futurice-regular.otf');
+}
+
 html {
     font-size: 14px;
     box-sizing: border-box;
 }
 body {
-    font-family: 'Helvetica', sans-serif;
-    font-weight: lighter;
+    font-family: 'FutuRegu', Arial, sans-serif;
+    font-weight: bold;
     margin: 0;
     color: #46289A;
 }
@@ -41,21 +46,21 @@ body {
     font-size: 3rem;
     display: flex;
     justify-content: space-between;
+    margin-right: 12rem;
 }
 
 .munich-logo {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    margin: 1rem 2vw;
+    margin: 4vh 2vw;
 }
 
 .munich-logo__image {
-    width: 16vw;
+    width: 8vw;
 }
 
 .jolts-header {
-    font-weight: lighter;
     font-size: 1.3rem;
     margin-top: 3rem;
     margin-left: 3vw;
@@ -78,23 +83,51 @@ body {
     width: 19vw;
 }
 
-.jolt-content {
+.jolt-in-message {
+    text-transform: uppercase;
+    animation: pulse 4s infinite;
+    padding: .2rem .2rem .1rem;
+}
+
+@keyframes pulse {
+    0%, 50%, 100% {
+        background-color: #FFF;
+        color: #46289A;
+    }
+    25% {
+        background-color: #46289A;
+        color: #FFF;
+    }
+}
+
+.jolt-participants {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: .5rem;
 }
 
+.jolt-participants__arrow {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.jolt-participants__user-img {
+    border-radius: 50%;
+}
+
+.jolt-participants__user-img--right {
+    border-radius: 50%;
+    margin-left: .2rem;
+}
+
+.jolt-content {
+    margin-bottom: .5rem;
+    word-wrap: break-word;
+}
+
 .jolt-details {
-    display: flex;
-    justify-content: space-between;
-}
-
-.jolt-user {
     font-size: .7rem;
-}
-
-.jolt-sent {
-    font-size: .7rem;
-    display: flex;
-    flex-direction: column-reverse;
 }
 
 .no-jolts {

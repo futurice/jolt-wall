@@ -1,25 +1,17 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img, p, button)
-import Html.Attributes exposing (src, disabled, id, class)
+import Html exposing (Html, text, div, h1)
+import Html.Attributes exposing (class)
 import Http
 import Json.Decode exposing (Decoder)
 import Time exposing (Time, second, millisecond)
-import Date exposing (Date, Month, toTime, fromTime)
-import Time.DateTime as DateTime exposing (DateTime, fromTimestamp, toTimestamp, toISO8601, addMonths)
-import Maybe exposing (withDefault)
-import List exposing (take)
 import Task
+import Types.Config exposing (Config)
+import Types.Model exposing (Model)
 import Types.Message exposing (Message, decodeMessages)
 import Types.User exposing (User, decodeUsers)
-import Components.JoltMessage exposing (joltMessage)
-
-type alias Config =
-    { 
-      userToken: String,
-      apiRoot: String,
-      flowUrl: String
-    }
+import Components.JoltMessages exposing (joltMessages)
+import Components.JoltCounts exposing (joltCounts)
 
 
 ---- COMMANDS ----
@@ -64,27 +56,12 @@ requestFlowUsers config =
 
 
 requestFlowMessages : Config -> Cmd Msg
-requestFlowMessages config = 
-    requestFlow 
+requestFlowMessages config =
+    requestFlow
         (config.apiRoot ++ config.flowUrl ++ "/messages?search=jolt&limit=100")
         config.userToken
         decodeMessages
         GetFlowMessagesResponse
-
-
-
----- MODEL ----
-
-
-type alias Model =
-    { currentTime : Time
-    , flowMessagesLoading : Bool
-    , flowMessagesLoadingError : Maybe String
-    , flowMessages : List Message
-    , flowUsers : List User
-    , flowUsersError : Maybe String
-    , config: Config
-    }
 
 
 init : Config -> ( Model, Cmd Msg )
@@ -109,8 +86,7 @@ init config =
 
 
 type Msg
-    = GetFlowJolts
-    | GetFlowMessagesResponse (Result Http.Error (List Message))
+    = GetFlowMessagesResponse (Result Http.Error (List Message))
     | GetFlowUserResponse (Result Http.Error (List User))
     | Tick Time
     | NoOp
@@ -119,11 +95,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GetFlowJolts ->
-            ( { model | flowMessagesLoading = True, flowMessagesLoadingError = Nothing }
-            , requestFlowMessages model.config
-            )
-
         GetFlowMessagesResponse (Ok joltMessages) ->
             ( { model | flowMessages = joltMessages, flowMessagesLoading = False }, Cmd.none )
 
@@ -165,162 +136,39 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        messagesError =
-            case model.flowMessagesLoadingError of
-                Just error ->
-                    div [] [ text error ]
+        renderError error =
+            case error of
+                Just err ->
+                    div [] [ text err ]
 
                 Nothing ->
                     text ""
+
+        messagesError =
+            renderError model.flowMessagesLoadingError
 
         usersError =
-            case model.flowUsersError of
-                Just error ->
-                    div [] [ text error ]
-
-                Nothing ->
-                    text ""
+            renderError model.flowUsersError
 
         loadingText =
             if model.flowMessagesLoading then
-                "   Loading..."
+                div [] [ text "Loading..." ]
             else
-                ""
-
-        currentDate =
-            model.currentTime
-                |> Date.fromTime
-
-        currentDateTime =
-            model.currentTime
-                |> fromTimestamp
-
-        thisYear =
-            Date.year currentDate
-
-        thisMonth =
-            Date.month currentDate
-
-        previousMonth : Int -> Time
-        previousMonth months =
-            currentDateTime
-                |> addMonths months
-                |> toTimestamp
-
-        allMonths : List Time
-        allMonths =
-            [ previousMonth -1
-            , previousMonth -2
-            , previousMonth -3
-            ]
-
-        validJolts =
-            model.flowMessages
-                |> List.reverse
-                |> List.filter (\item -> item.event == "message")
-                |> List.filter (\item -> item.content /= Nothing)
-
-        joltsThisMonth =
-            validJolts
-                |> List.filter
-                    (\jolt ->
-                        (Date.month jolt.sent)
-                            == thisMonth
-                            && (Date.year jolt.sent)
-                            == thisYear
-                    )
-                |> List.length
-
-        joltsInPreviousMonths : List ( Month, Int )
-        joltsInPreviousMonths =
-            allMonths
-                |> List.map
-                    (\time ->
-                        let
-                            year =
-                                time
-                                    |> fromTime
-                                    |> Date.year
-
-                            month =
-                                time
-                                    |> fromTime
-                                    |> Date.month
-
-                            joltAmount =
-                                validJolts
-                                    |> List.filter
-                                        (\jolt ->
-                                            (Date.month jolt.sent)
-                                                == month
-                                                && (Date.year jolt.sent)
-                                                == year
-                                        )
-                                    |> List.length
-                        in
-                            ( month, joltAmount )
-                    )
-
-        renderJoltHistory : List ( Month, Int ) -> List (Html Msg)
-        renderJoltHistory monthJoltsList =
-            monthJoltsList
-                |> List.map
-                    (\monthJolts ->
-                        let
-                            monthString =
-                                monthJolts
-                                    |> Tuple.first
-                                    |> toString
-
-                            joltsString =
-                                monthJolts
-                                    |> Tuple.second
-                                    |> toString
-                        in
-                            div [ class "jolts-count__history" ]
-                                [ div [] [ text monthString ]
-                                , div [] [ text joltsString ]
-                                ]
-                    )
-
-        joltMessages : List (Html Msg)
-        joltMessages =
-            if List.length model.flowMessages == 0 then
-                [ div [ class "no-jolts" ] [ text "KEINE JOLTS!!! Was ist los!" ] ]
-            else
-                validJolts
-                    |> take 12
-                    |> List.indexedMap
-                        (\index item ->
-                            let
-                                htmlId =
-                                    ("jolt-message-" ++ toString index)
-                            in
-                                div [ id htmlId, class "jolt-message" ] (joltMessage item model.flowUsers)
-                        )
+                text ""
     in
         div []
-            ([ div [ class "jolts-counts" ]
-                [ div [ class "jolts-count" ]
-                    [ div [ class "jolts-count__hero-number" ] [ text <| toString joltsThisMonth ]
-                    , div [ class "jolts-count__hero-text" ] [ text "Jolts this month" ]
-                    ]
-                , div [ class "jolts-count" ] (renderJoltHistory joltsInPreviousMonths)
-                , div [ class "munich-logo" ] [ img [ src "/logo.svg", class "munich-logo__image" ] [] ]
-                ]
+            ([ joltCounts model
              , messagesError
              , usersError
-             , h1 [ class "jolts-header" ]
-                [ text <| "Jolt feed" ++ loadingText
-                  --, button [ onClick GetFlowJolts ] [ text "Get jolts" ]
-                ]
-             , div [ class "jolt-messages" ] joltMessages
+             , loadingText
+             , joltMessages model
              ]
             )
 
 
 
 ---- PROGRAM ----
+
 
 main : Program Config Model Msg
 main =
