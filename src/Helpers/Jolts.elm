@@ -17,12 +17,22 @@ userTag =
     ":user:"
 
 
+isMessage : Message -> Bool
+isMessage { event } =
+    event == "message"
+
+
+hasContent : Message -> Bool
+hasContent { content } =
+    content /= Nothing
+
+
 validJolts : List Message -> List Message
 validJolts flowMessages =
     flowMessages
         |> reverse
-        |> filter (\item -> item.event == "message")
-        |> filter (\item -> item.content /= Nothing)
+        |> filter isMessage
+        |> filter hasContent
 joltInMonth : Time -> Message -> Bool
 joltInMonth time { sent } =
     month sent
