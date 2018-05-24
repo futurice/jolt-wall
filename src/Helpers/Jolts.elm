@@ -36,10 +36,10 @@ isUserTagged { tags } =
 validJolts : List Message -> List Message
 validJolts flowMessages =
     flowMessages
-        |> reverse
         |> filter isMessage
         |> filter hasContent
         |> filter isUserTagged
+        |> reverse
 
 
 joltInMonth : Time -> Message -> Bool
