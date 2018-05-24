@@ -136,19 +136,24 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        renderError error =
+        renderError errorType error =
             case error of
                 Just err ->
-                    div [] [ text err ]
+                    div [ class "error" ]
+                        [ text "Couldn't load "
+                        , text errorType
+                        , text ": "
+                        , text err
+                        ]
 
                 Nothing ->
                     text ""
 
         messagesError =
-            renderError model.flowMessagesLoadingError
+            renderError "messages" model.flowMessagesLoadingError
 
         usersError =
-            renderError model.flowUsersError
+            renderError "users" model.flowUsersError
 
         loadingText =
             if model.flowMessagesLoading then
