@@ -13,10 +13,14 @@ import Helpers.Jolts exposing (userTag, joltTag)
 joltMessage : Message -> List User -> List (Html msg)
 joltMessage jolt users =
     let
+        isUserWithId : String -> User -> Bool
+        isUserWithId idToTest { id } =
+            id == idToTest
+
         joltUser : User
         joltUser =
             users
-                |> List.filter (\user -> user.id == jolt.user)
+                |> List.filter (isUserWithId jolt.user)
                 |> List.head
                 |> withDefault (User "" "unknown" "")
 
@@ -28,7 +32,7 @@ joltMessage jolt users =
                 |> List.filterMap
                     (\userIdString ->
                         users
-                            |> List.filter (\user -> user.id == userIdString)
+                            |> List.filter (isUserWithId userIdString)
                             |> List.head
                     )
 
