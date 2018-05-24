@@ -1,6 +1,7 @@
 module Helpers.Jolts exposing (..)
 
-import List exposing (reverse, filter, length, map)
+import List exposing (reverse, filter, length, map, any)
+import String exposing (contains)
 import Date exposing (Month, year, month)
 import Time exposing (Time)
 import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMonths)
@@ -27,12 +28,20 @@ hasContent { content } =
     content /= Nothing
 
 
+isUserTagged : Message -> Bool
+isUserTagged { tags } =
+    any (contains userTag) tags
+
+
 validJolts : List Message -> List Message
 validJolts flowMessages =
     flowMessages
         |> reverse
         |> filter isMessage
         |> filter hasContent
+        |> filter isUserTagged
+
+
 joltInMonth : Time -> Message -> Bool
 joltInMonth time { sent } =
     month sent
