@@ -7,6 +7,7 @@ import String exposing (padLeft, left, dropLeft, split, startsWith)
 import Date exposing (minute, hour, day, month)
 import Types.Message exposing (Message)
 import Types.User exposing (User)
+import Helpers.Jolts exposing (userTag, joltTag)
 
 
 joltMessage : Message -> List User -> List (Html msg)
@@ -21,19 +22,15 @@ joltMessage jolt users =
 
         joltedUsers : List User
         joltedUsers =
-            let
-                userTag =
-                    ":user:"
-            in
-                jolt.tags
-                    |> List.filter (\tag -> startsWith userTag tag)
-                    |> List.map (dropLeft <| String.length userTag)
-                    |> List.filterMap
-                        (\userIdString ->
-                            users
-                                |> List.filter (\user -> user.id == userIdString)
-                                |> List.head
-                        )
+            jolt.tags
+                |> List.filter (\tag -> startsWith userTag tag)
+                |> List.map (dropLeft <| String.length userTag)
+                |> List.filterMap
+                    (\userIdString ->
+                        users
+                            |> List.filter (\user -> user.id == userIdString)
+                            |> List.head
+                    )
 
         joltSent : String
         joltSent =
@@ -51,14 +48,6 @@ joltMessage jolt users =
                 string ++ "..."
             else
                 string
-
-        splitWithJolt : String -> List String
-        splitWithJolt string =
-            let
-                joltTag =
-                    ":jolt:"
-            in
-                split joltTag string
 
         joltSpan : Html msg
         joltSpan =
@@ -90,7 +79,7 @@ joltMessage jolt users =
             withDefault "Empty content!? Thanks Flowdock!" jolt.content
                 |> left 140
                 |> addEllipsis
-                |> splitWithJolt
+                |> split joltTag
                 |> List.map stringToSpan
                 |> extractHeadTailAsEmptyArrays
                 |> addJoltsBetweenItems

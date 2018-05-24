@@ -7,6 +7,16 @@ import Helpers.Dates exposing (getMonthFromTime, getYearFromTime, getPreviousMon
 import Types.Message exposing (Message)
 
 
+joltTag : String
+joltTag =
+    ":jolt:"
+
+
+userTag : String
+userTag =
+    ":user:"
+
+
 validJolts : List Message -> List Message
 validJolts flowMessages =
     flowMessages
