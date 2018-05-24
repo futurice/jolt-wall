@@ -23,19 +23,19 @@ validJolts flowMessages =
         |> reverse
         |> filter (\item -> item.event == "message")
         |> filter (\item -> item.content /= Nothing)
+joltInMonth : Time -> Message -> Bool
+joltInMonth time { sent } =
+    month sent
+        == getMonthFromTime time
+        && year sent
+        == getYearFromTime time
 
 
 joltsCountInMonth : List Message -> Time -> Int
 joltsCountInMonth flowMessages time =
     flowMessages
         |> validJolts
-        |> filter
-            (\jolt ->
-                (month jolt.sent)
-                    == (getMonthFromTime time)
-                    && (year jolt.sent)
-                    == (getYearFromTime time)
-            )
+        |> filter (joltInMonth time)
         |> length
 
 
