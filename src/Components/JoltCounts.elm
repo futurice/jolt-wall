@@ -20,22 +20,11 @@ joltCounts model =
         renderJoltHistory monthJoltsList =
             monthJoltsList
                 |> List.map
-                    (\monthJolts ->
-                        let
-                            monthString =
-                                monthJolts
-                                    |> Tuple.first
-                                    |> toString
-
-                            joltsString =
-                                monthJolts
-                                    |> Tuple.second
-                                    |> toString
-                        in
-                            div [ class "jolts-count__history" ]
-                                [ div [] [ text monthString ]
-                                , div [] [ text joltsString ]
-                                ]
+                    (\( month, joltCount ) ->
+                        div [ class "jolts-count__history" ]
+                            [ div [] [ text <| toString month ]
+                            , div [] [ text <| toString joltCount ]
+                            ]
                     )
     in
         div [ class "jolts-counts" ]
