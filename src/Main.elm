@@ -89,6 +89,7 @@ type Msg
     = GetFlowMessagesResponse (Result Http.Error (List Message))
     | GetFlowUserResponse (Result Http.Error (List User))
     | Tick Time
+    | Tock Time
     | NoOp
 
 
@@ -116,6 +117,11 @@ update msg model =
             , requestFlowMessages model.config
             )
 
+        Tock time ->
+            ( model
+            , requestFlowUsers model.config
+            )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -126,7 +132,10 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (300 * second) Tick
+    Sub.batch
+        [ Time.every (2 * 60 * second) Tick
+        , Time.every (60 * 60 * second) Tock
+        ]
 
 
 
