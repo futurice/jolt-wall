@@ -118,7 +118,7 @@ update msg model =
             )
 
         Tock time ->
-            ( model
+            ( { model | flowUsersError = Nothing }
             , requestFlowUsers model.config
             )
 
