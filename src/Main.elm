@@ -4,7 +4,7 @@ import Html exposing (Html, text, div, h1)
 import Html.Attributes exposing (class)
 import Http
 import Json.Decode exposing (Decoder)
-import Time exposing (Time, second, millisecond)
+import Time exposing (Time, second)
 import Task
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
