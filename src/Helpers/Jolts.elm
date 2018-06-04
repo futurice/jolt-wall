@@ -42,8 +42,8 @@ validJolts flowMessages =
         |> reverse
 
 
-joltInMonth : Time -> Message -> Bool
-joltInMonth time { sent } =
+isJoltInMonth : Time -> Message -> Bool
+isJoltInMonth time { sent } =
     month sent
         == getMonthFromTime time
         && year sent
@@ -54,7 +54,7 @@ joltsCountInMonth : List Message -> Time -> Int
 joltsCountInMonth flowMessages time =
     flowMessages
         |> validJolts
-        |> filter (joltInMonth time)
+        |> filter (isJoltInMonth time)
         |> length
 
 

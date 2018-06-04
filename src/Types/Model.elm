@@ -6,9 +6,6 @@ import Types.User exposing (User)
 import Types.Config exposing (Config)
 
 
----- TYPE ----
-
-
 type alias Model =
     { currentTime : Time
     , flowMessagesLoading : Bool
