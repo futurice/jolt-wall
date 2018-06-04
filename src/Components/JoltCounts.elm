@@ -15,17 +15,6 @@ joltCounts model =
 
         joltsCountInPreviousMonths =
             joltsInPreviousMonths model.flowMessages model.currentTime 3
-
-        renderJoltHistory : List ( Month, Int ) -> List (Html msg)
-        renderJoltHistory monthJoltsList =
-            monthJoltsList
-                |> List.map
-                    (\( month, joltCount ) ->
-                        div [ class "jolts-count__history" ]
-                            [ div [] [ text <| toString month ]
-                            , div [] [ text <| toString joltCount ]
-                            ]
-                    )
     in
         div [ class "jolts-counts" ]
             [ div [ class "jolts-count" ]
@@ -35,3 +24,15 @@ joltCounts model =
             , div [ class "jolts-count" ] (renderJoltHistory joltsCountInPreviousMonths)
             , div [ class "munich-logo" ] [ img [ src "/logo.svg", class "munich-logo__image" ] [] ]
             ]
+
+
+renderJoltHistory : List ( Month, Int ) -> List (Html msg)
+renderJoltHistory monthJoltsList =
+    monthJoltsList
+        |> List.map
+            (\( month, joltCount ) ->
+                div [ class "jolts-count__history" ]
+                    [ div [] [ text <| toString month ]
+                    , div [] [ text <| toString joltCount ]
+                    ]
+            )
