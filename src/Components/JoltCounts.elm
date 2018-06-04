@@ -7,6 +7,11 @@ import Types.Model exposing (Model)
 import Helpers.Jolts exposing (joltsCountInMonth, joltsInPreviousMonths)
 
 
+joltHistoryLength : number
+joltHistoryLength =
+    3
+
+
 joltCounts : Model -> Html msg
 joltCounts model =
     let
@@ -14,7 +19,7 @@ joltCounts model =
             joltsCountInMonth model.flowMessages model.currentTime
 
         joltsCountInPreviousMonths =
-            joltsInPreviousMonths model.flowMessages model.currentTime 3
+            joltsInPreviousMonths model.flowMessages model.currentTime joltHistoryLength
     in
         div [ class "jolts-counts" ]
             [ div [ class "jolts-count" ]
