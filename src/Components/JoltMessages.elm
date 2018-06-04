@@ -2,10 +2,9 @@ module Components.JoltMessages exposing (..)
 
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (id, class)
-import List exposing (indexedMap, length, take)
+import List exposing (indexedMap, isEmpty, take)
 import Components.JoltMessage exposing (joltMessage)
 import Types.Model exposing (Model)
-import Types.Message exposing (Message)
 import Helpers.Jolts exposing (validJolts)
 
 
@@ -16,7 +15,7 @@ joltMessages model =
             model.flowMessages
 
         renderJolts =
-            if length messages == 0 then
+            if isEmpty messages then
                 [ div [ class "no-jolts" ] [ text "KEINE JOLTS!!! Was ist los!" ] ]
             else
                 validJolts messages
