@@ -8,7 +8,7 @@ import Types.Model exposing (Model)
 import Helpers.Jolts exposing (joltsCountInMonth, joltsInPreviousMonths)
 
 
-joltHistoryLength : number
+joltHistoryLength : Int
 joltHistoryLength =
     3
 
