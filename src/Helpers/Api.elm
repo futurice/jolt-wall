@@ -2,15 +2,17 @@ module Helpers.Api exposing (..)
 
 import Json.Decode exposing (Decoder)
 import Http exposing (header, emptyBody, expectJson, request)
+import Types.Msg exposing (..)
 import Types.Message exposing (decodeMessages)
 import Types.User exposing (decodeUsers)
+import Types.Config exposing (Config)
 
 
-requestFlow : String -> Decoder a -> (Result Http.Error a -> msg) -> Cmd msg
-requestFlow url decodeBody messageAfterResponse =
+requestFlow : String -> String -> Decoder a -> (Result Http.Error a -> Msg) -> Cmd Msg
+requestFlow url userToken decodeBody messageAfterResponse =
     let
         authorization =
-            "Basic NjE4NDVkZDhjYTA5ZjJkMmU3MzYxYzM0Yzg5YmZmNTA="
+            "Basic " ++ userToken
 
         request =
             Http.request
@@ -29,17 +31,19 @@ requestFlow url decodeBody messageAfterResponse =
         Http.send messageAfterResponse request
 
 
-requestFlowUsers : Cmd msg
-requestFlowUsers msg =
+requestFlowUsers : Config -> Cmd Msg
+requestFlowUsers config =
     requestFlow
-        "https://api.flowdock.com/flows/futurice/munich/users"
+        (config.apiRoot ++ config.flowUrl ++ "/users")
+        config.userToken
         decodeUsers
-        msg
+        GetFlowUserResponse
 
 
-requestFlowMessages : Cmd msg
-requestFlowMessages msg =
+requestFlowMessages : Config -> Cmd Msg
+requestFlowMessages config =
     requestFlow
-        "https://api.flowdock.com/flows/futurice/munich/messages?search=jolt&limit=100"
+        (config.apiRoot ++ config.flowUrl ++ "/messages?search=jolt&limit=100")
+        config.userToken
         decodeMessages
-        msg
+        GetFlowMessagesResponse

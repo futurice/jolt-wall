@@ -2,14 +2,12 @@ module Main exposing (..)
 
 import Html exposing (Html, text, div, h1)
 import Html.Attributes exposing (class)
-import Http
-import Json.Decode exposing (Decoder)
+import Helpers.Api exposing (requestFlowUsers, requestFlowMessages)
 import Time exposing (Time, second)
 import Task
+import Types.Msg exposing (..)
 import Types.Config exposing (Config)
 import Types.Model exposing (Model)
-import Types.Message exposing (Message, decodeMessages)
-import Types.User exposing (User, decodeUsers)
 import Components.JoltMessages exposing (joltMessages)
 import Components.JoltCounts exposing (joltCounts)
 
@@ -21,47 +19,6 @@ getTime : Cmd Msg
 getTime =
     Time.now
         |> Task.perform Tick
-
-
-requestFlow : String -> String -> Decoder a -> (Result Http.Error a -> Msg) -> Cmd Msg
-requestFlow url userToken decodeBody messageAfterResponse =
-    let
-        authorization =
-            "Basic " ++ userToken
-
-        request =
-            Http.request
-                { method = "GET"
-                , headers =
-                    [ Http.header "Content-Type" "application/json"
-                    , Http.header "Authorization" authorization
-                    ]
-                , url = url
-                , body = Http.emptyBody
-                , expect = Http.expectJson decodeBody
-                , timeout = Nothing
-                , withCredentials = False
-                }
-    in
-        Http.send messageAfterResponse request
-
-
-requestFlowUsers : Config -> Cmd Msg
-requestFlowUsers config =
-    requestFlow
-        (config.apiRoot ++ config.flowUrl ++ "/users")
-        config.userToken
-        decodeUsers
-        GetFlowUserResponse
-
-
-requestFlowMessages : Config -> Cmd Msg
-requestFlowMessages config =
-    requestFlow
-        (config.apiRoot ++ config.flowUrl ++ "/messages?search=jolt&limit=100")
-        config.userToken
-        decodeMessages
-        GetFlowMessagesResponse
 
 
 init : Config -> ( Model, Cmd Msg )
@@ -83,14 +40,6 @@ init config =
 
 
 ---- UPDATE ----
-
-
-type Msg
-    = GetFlowMessagesResponse (Result Http.Error (List Message))
-    | GetFlowUserResponse (Result Http.Error (List User))
-    | Tick Time
-    | Tock Time
-    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

@@ -4,11 +4,12 @@ import Html exposing (Html, text, div)
 import Html.Attributes exposing (id, class)
 import List exposing (indexedMap, isEmpty, take)
 import Components.JoltMessage exposing (joltMessage)
+import Types.Msg exposing (..)
 import Types.Model exposing (Model)
 import Helpers.Jolts exposing (validJolts)
 
 
-joltMessages : Model -> Html msg
+joltMessages : Model -> Html Msg
 joltMessages model =
     let
         messages =

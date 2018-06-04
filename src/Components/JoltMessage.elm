@@ -5,12 +5,13 @@ import Html.Attributes exposing (src, class)
 import Maybe exposing (withDefault)
 import String exposing (padLeft, left, dropLeft, split, startsWith)
 import Date exposing (minute, hour, day, month)
+import Types.Msg exposing (..)
 import Types.Message exposing (Message)
 import Types.User exposing (User)
 import Helpers.Jolts exposing (userTag, joltTag)
 
 
-joltMessage : Message -> List User -> List (Html msg)
+joltMessage : Message -> List User -> List (Html Msg)
 joltMessage jolt users =
     let
         isUserWithId : String -> User -> Bool
@@ -53,15 +54,15 @@ joltMessage jolt users =
             else
                 string
 
-        joltSpan : Html msg
+        joltSpan : Html Msg
         joltSpan =
             span [ class "jolt-in-message" ] [ text "jolt" ]
 
-        stringToSpan : String -> Html msg
+        stringToSpan : String -> Html Msg
         stringToSpan string =
             span [] [ text string ]
 
-        extractHeadTailAsEmptyArrays : List (Html msg) -> ( List (Html msg), List (Html msg) )
+        extractHeadTailAsEmptyArrays : List (Html Msg) -> ( List (Html Msg), List (Html Msg) )
         extractHeadTailAsEmptyArrays spans =
             ( withDefault []
                 (List.head spans
@@ -70,15 +71,15 @@ joltMessage jolt users =
             , withDefault [] (List.tail spans)
             )
 
-        foldJolts : Html msg -> List (Html msg) -> List (Html msg)
+        foldJolts : Html Msg -> List (Html Msg) -> List (Html Msg)
         foldJolts span cum =
             List.concat [ cum, [ joltSpan ], [ span ] ]
 
-        addJoltsBetweenItems : ( List (Html msg), List (Html msg) ) -> List (Html msg)
+        addJoltsBetweenItems : ( List (Html Msg), List (Html Msg) ) -> List (Html Msg)
         addJoltsBetweenItems ( spansHead, spansTail ) =
             List.foldl (foldJolts) spansHead spansTail
 
-        joltMessage : List (Html msg)
+        joltMessage : List (Html Msg)
         joltMessage =
             withDefault "Empty content!? Thanks Flowdock!" jolt.content
                 |> left 140
