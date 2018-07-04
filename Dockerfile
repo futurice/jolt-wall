@@ -1,5 +1,8 @@
 FROM node:10
 
+EXPOSE 8000
+
+# install node http server
 RUN npm install -g http-server
 
 # Create directory for app
@@ -17,6 +20,5 @@ RUN chown -R node /jolt-wall
 # Drop root privileges. everything after this will be done as user node
 USER node
 
-EXPOSE 8000
 # serve the static content from build directory
 CMD ["http-server", "/jolt-wall/build", "-p", "8000"]
