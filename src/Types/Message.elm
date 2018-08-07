@@ -12,7 +12,6 @@ type alias Message =
     { user : String
     , content : Maybe String
     , event : String
-    , uuid : String
     , sent : Date
     , createdAt : String
     , tags : List String
@@ -45,7 +44,6 @@ decodeMessage =
         |> required "user" string
         |> optional "content" (maybe string) Nothing
         |> required "event" string
-        |> required "uuid" string
         |> required "sent" decodeDate
         |> required "created_at" string
         |> required "tags" decodeTags
